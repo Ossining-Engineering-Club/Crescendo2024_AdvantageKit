@@ -118,8 +118,7 @@ public class ModuleIOTalonFXAndSparkMax implements ModuleIO {
 
     turnAbsolutePosition = cancoder.getAbsolutePosition();
 
-    BaseStatusSignal.setUpdateFrequencyForAll(
-        100.0, drivePosition);
+    BaseStatusSignal.setUpdateFrequencyForAll(100.0, drivePosition);
     BaseStatusSignal.setUpdateFrequencyForAll(
         50.0, driveVelocity, driveAppliedVolts, driveCurrent, turnAbsolutePosition);
     driveTalon.optimizeBusUtilization();
