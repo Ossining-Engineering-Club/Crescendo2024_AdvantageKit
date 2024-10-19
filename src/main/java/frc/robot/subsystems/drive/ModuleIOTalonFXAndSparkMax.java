@@ -66,28 +66,28 @@ public class ModuleIOTalonFXAndSparkMax implements ModuleIO {
   public ModuleIOTalonFXAndSparkMax(int index) {
     switch (index) {
       case 0:
-        driveTalon = new TalonFX(0);
-        turnSparkMax = new CANSparkMax(2, MotorType.kBrushless);
-        cancoder = new CANcoder(2);
-        absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
+        driveTalon = new TalonFX(2);
+        turnSparkMax = new CANSparkMax(1, MotorType.kBrushless);
+        cancoder = new CANcoder(9);
+        absoluteEncoderOffset = new Rotation2d(.7209709703); // MUST BE CALIBRATED
         break;
       case 1:
-        driveTalon = new TalonFX(3);
-        turnSparkMax = new CANSparkMax(2, MotorType.kBrushless);
-        cancoder = new CANcoder(5);
-        absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
+        driveTalon = new TalonFX(4);
+        turnSparkMax = new CANSparkMax(3, MotorType.kBrushless);
+        cancoder = new CANcoder(10);
+        absoluteEncoderOffset = new Rotation2d(-.9955535133); // MUST BE CALIBRATED
         break;
       case 2:
         driveTalon = new TalonFX(6);
-        turnSparkMax = new CANSparkMax(2, MotorType.kBrushless);
-        cancoder = new CANcoder(8);
-        absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
+        turnSparkMax = new CANSparkMax(5, MotorType.kBrushless);
+        cancoder = new CANcoder(11);
+        absoluteEncoderOffset = new Rotation2d(-1.31157364); // MUST BE CALIBRATED
         break;
       case 3:
-        driveTalon = new TalonFX(9);
-        turnSparkMax = new CANSparkMax(2, MotorType.kBrushless);
-        cancoder = new CANcoder(11);
-        absoluteEncoderOffset = new Rotation2d(0.0); // MUST BE CALIBRATED
+        driveTalon = new TalonFX(8);
+        turnSparkMax = new CANSparkMax(7, MotorType.kBrushless);
+        cancoder = new CANcoder(12);
+        absoluteEncoderOffset = new Rotation2d(1.44807786); // MUST BE CALIBRATED
         break;
       default:
         throw new RuntimeException("Invalid module index");
