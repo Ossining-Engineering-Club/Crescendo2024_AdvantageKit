@@ -18,7 +18,7 @@ import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 import edu.wpi.first.math.geometry.Rotation2d;
 
-/** IO implementation for Pigeon2 */
+/** IO implementation for PigeonIMU */
 public class GyroIOPigeonIMU implements GyroIO {
   private final PigeonIMU pigeon = new PigeonIMU(60);
 
