@@ -14,6 +14,7 @@
 package frc.robot.subsystems.drive;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 import com.ctre.phoenix.sensors.PigeonIMU.PigeonState;
 import edu.wpi.first.math.geometry.Rotation2d;
 
@@ -23,6 +24,7 @@ public class GyroIOPigeonIMU implements GyroIO {
 
   public GyroIOPigeonIMU() {
     pigeon.setYaw(0.0);
+    pigeon.setStatusFramePeriod(PigeonIMU_StatusFrame.BiasedStatus_2_Gyro, 10);
   }
 
   @Override
