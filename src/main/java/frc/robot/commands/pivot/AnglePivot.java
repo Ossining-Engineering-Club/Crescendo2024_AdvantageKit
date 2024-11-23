@@ -4,28 +4,28 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.pivot.Pivot;
 
 public class AnglePivot extends Command {
-    private final Pivot pivot;
-    private final double angle;
-    
-    public AnglePivot(double angle, Pivot pivot) {
-        this.pivot = pivot;
-        this.angle = angle;
+  private final Pivot pivot;
+  private final double angle;
 
-        addRequirements(pivot);
-    }
+  public AnglePivot(double angle, Pivot pivot) {
+    this.pivot = pivot;
+    this.angle = angle;
 
-    @Override
-    public void execute() {
-        pivot.runSetpoint(angle);
-    }
+    addRequirements(pivot);
+  }
 
-    @Override
-    public void end(boolean interrupted) {
-        pivot.stop();
-    }
+  @Override
+  public void execute() {
+    pivot.runSetpoint(angle);
+  }
 
-    @Override
-    public boolean isFinished() {
-        return pivot.atSetpoint();
-    }
+  @Override
+  public void end(boolean interrupted) {
+    pivot.stop();
+  }
+
+  @Override
+  public boolean isFinished() {
+    return pivot.atSetpoint();
+  }
 }

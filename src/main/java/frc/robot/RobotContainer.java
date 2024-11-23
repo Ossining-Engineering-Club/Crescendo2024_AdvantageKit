@@ -31,38 +31,38 @@ import frc.robot.commands.intake.IntakeNoteToShooter;
 import frc.robot.commands.intake.ReverseNote;
 import frc.robot.commands.pivot.AnglePivot;
 import frc.robot.commands.shooter.Shoot;
+import frc.robot.subsystems.amppivot.AmpPivot;
+import frc.robot.subsystems.amppivot.AmpPivotConstants;
+import frc.robot.subsystems.amppivot.AmpPivotIO;
+import frc.robot.subsystems.amppivot.AmpPivotIOSim;
+import frc.robot.subsystems.amppivot.AmpPivotIOSparkMax;
+import frc.robot.subsystems.breakbeam.BreakbeamIO;
+import frc.robot.subsystems.breakbeam.BreakbeamIOReal;
+import frc.robot.subsystems.breakbeam.BreakbeamIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFXAndSparkMax;
+import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.feeder.FeederIO;
+import frc.robot.subsystems.feeder.FeederIOSim;
+import frc.robot.subsystems.feeder.FeederIOSparkMax;
 import frc.robot.subsystems.flywheel.Flywheel;
 import frc.robot.subsystems.flywheel.FlywheelConstants;
-import frc.robot.subsystems.amppivot.AmpPivot;
-import frc.robot.subsystems.amppivot.AmpPivotConstants;
-import frc.robot.subsystems.feeder.Feeder;
+import frc.robot.subsystems.flywheel.FlywheelIO;
+import frc.robot.subsystems.flywheel.FlywheelIOSim;
+import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.intake.IntakeIO;
+import frc.robot.subsystems.intake.IntakeIOSim;
+import frc.robot.subsystems.intake.IntakeIOSparkMax;
 import frc.robot.subsystems.pivot.Pivot;
 import frc.robot.subsystems.pivot.PivotConstants;
-import frc.robot.subsystems.flywheel.FlywheelIOSparkMax;
-import frc.robot.subsystems.amppivot.AmpPivotIOSparkMax;
-import frc.robot.subsystems.breakbeam.BreakbeamIOReal;
-import frc.robot.subsystems.feeder.FeederIOSparkMax;
-import frc.robot.subsystems.intake.IntakeIOSparkMax;
-import frc.robot.subsystems.pivot.PivotIOSparkMax;
-import frc.robot.subsystems.flywheel.FlywheelIOSim;
-import frc.robot.subsystems.amppivot.AmpPivotIOSim;
-import frc.robot.subsystems.feeder.FeederIOSim;
-import frc.robot.subsystems.intake.IntakeIOSim;
-import frc.robot.subsystems.pivot.PivotIOSim;
-import frc.robot.subsystems.breakbeam.BreakbeamIOSim;
-import frc.robot.subsystems.flywheel.FlywheelIO;
-import frc.robot.subsystems.amppivot.AmpPivotIO;
-import frc.robot.subsystems.feeder.FeederIO;
-import frc.robot.subsystems.intake.IntakeIO;
 import frc.robot.subsystems.pivot.PivotIO;
-import frc.robot.subsystems.breakbeam.BreakbeamIO;
+import frc.robot.subsystems.pivot.PivotIOSim;
+import frc.robot.subsystems.pivot.PivotIOSparkMax;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -168,11 +168,9 @@ public class RobotContainer {
         "Flywheel SysId (Quasistatic Reverse)",
         flywheel.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
     autoChooser.addOption(
-        "Flywheel SysId (Dynamic Forward)",
-    flywheel.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        "Flywheel SysId (Dynamic Forward)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kForward));
     autoChooser.addOption(
-        "Flywheel SysId (Dynamic Reverse)",
-    flywheel.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        "Flywheel SysId (Dynamic Reverse)", flywheel.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -192,36 +190,47 @@ public class RobotContainer {
             () -> -driverController.getLeftX(),
             () -> -driverController.getRightX()));
     driverController.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
-    driverController.a().onTrue(
-      Commands.runOnce(() -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())), drive)
-        .ignoringDisable(true));
+    driverController
+        .a()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
 
     // cancel everything
-    secondaryController.povDown().onTrue(
-      Commands.runOnce(() -> stopEverything(),
-      intake,
-      feeder,
-      flywheel,
-      pivot,
-      ampPivot));
+    secondaryController
+        .povDown()
+        .onTrue(
+            Commands.runOnce(() -> stopEverything(), intake, feeder, flywheel, pivot, ampPivot));
 
     secondaryController.a().onTrue(new IntakeNoteToShooter(intake, feeder));
 
     secondaryController.b().onTrue(new AnglePivot(PivotConstants.kSubwooferAngle, pivot));
-    secondaryController.b().onTrue(Commands.runOnce(() -> flywheel.runVelocity(FlywheelConstants.kDefaultRPM), flywheel));
+    secondaryController
+        .b()
+        .onTrue(
+            Commands.runOnce(() -> flywheel.runVelocity(FlywheelConstants.kDefaultRPM), flywheel));
 
-    secondaryController.y().onTrue(
-      new ConditionalCommand(
-        new SequentialCommandGroup(
-          new AnglePivot(PivotConstants.kAmpAngle, pivot),
-          new AngleAmpPivot(AmpPivotConstants.extendedAngle, ampPivot)),
-        new SequentialCommandGroup(
-          new AngleAmpPivot(AmpPivotConstants.stowAngle, ampPivot),
-          new AnglePivot(PivotConstants.kStartAngle, pivot)),
-        () -> pivot.atAmpAngle()));
+    secondaryController
+        .y()
+        .onTrue(
+            new ConditionalCommand(
+                new SequentialCommandGroup(
+                    new AnglePivot(PivotConstants.kAmpAngle, pivot),
+                    new AngleAmpPivot(AmpPivotConstants.extendedAngle, ampPivot)),
+                new SequentialCommandGroup(
+                    new AngleAmpPivot(AmpPivotConstants.stowAngle, ampPivot),
+                    new AnglePivot(PivotConstants.kStartAngle, pivot)),
+                () -> pivot.atAmpAngle()));
 
-    secondaryController.rightBumper().onTrue(new Shoot(FlywheelConstants.kDefaultRPM, flywheel, feeder)
-                                    .andThen(new AnglePivot(PivotConstants.kStartAngle, pivot)));
+    secondaryController
+        .rightBumper()
+        .onTrue(
+            new Shoot(FlywheelConstants.kDefaultRPM, flywheel, feeder)
+                .andThen(new AnglePivot(PivotConstants.kStartAngle, pivot)));
 
     secondaryController.rightTrigger(0.9).whileTrue(new ReverseNote(intake, feeder));
   }
