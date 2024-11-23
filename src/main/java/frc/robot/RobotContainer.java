@@ -63,6 +63,8 @@ import frc.robot.subsystems.pivot.PivotConstants;
 import frc.robot.subsystems.pivot.PivotIO;
 import frc.robot.subsystems.pivot.PivotIOSim;
 import frc.robot.subsystems.pivot.PivotIOSparkMax;
+import frc.robot.subsystems.vision.Vision;
+import frc.robot.subsystems.vision.VisionConstants;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.littletonrobotics.junction.networktables.LoggedDashboardNumber;
 
@@ -80,6 +82,7 @@ public class RobotContainer {
   private final Feeder feeder;
   private final Intake intake;
   private final Pivot pivot;
+  private final Vision vision;
 
   // Controller
   private final CommandXboxController driverController = new CommandXboxController(0);
@@ -95,13 +98,15 @@ public class RobotContainer {
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
+        vision = new Vision(VisionConstants.FRONT_CAMERA);
         drive =
             new Drive(
                 new GyroIOPigeon2(),
                 new ModuleIOTalonFXAndSparkMax(0),
                 new ModuleIOTalonFXAndSparkMax(1),
                 new ModuleIOTalonFXAndSparkMax(2),
-                new ModuleIOTalonFXAndSparkMax(3));
+                new ModuleIOTalonFXAndSparkMax(3),
+                vision);
         flywheel = new Flywheel(new FlywheelIOSparkMax());
         ampPivot = new AmpPivot(new AmpPivotIOSparkMax());
         feeder = new Feeder(new FeederIOSparkMax(), new BreakbeamIOReal(0));
@@ -111,13 +116,15 @@ public class RobotContainer {
 
       case SIM:
         // Sim robot, instantiate physics sim IO implementations
+        vision = new Vision(VisionConstants.FRONT_CAMERA);
         drive =
             new Drive(
                 new GyroIO() {},
                 new ModuleIOSim(),
                 new ModuleIOSim(),
                 new ModuleIOSim(),
-                new ModuleIOSim());
+                new ModuleIOSim(),
+                vision);
         flywheel = new Flywheel(new FlywheelIOSim());
         ampPivot = new AmpPivot(new AmpPivotIOSim());
         feeder = new Feeder(new FeederIOSim(), new BreakbeamIOSim());
@@ -127,13 +134,15 @@ public class RobotContainer {
 
       default:
         // Replayed robot, disable IO implementations
+        vision = new Vision(VisionConstants.FRONT_CAMERA);
         drive =
             new Drive(
                 new GyroIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
                 new ModuleIO() {},
-                new ModuleIO() {});
+                new ModuleIO() {},
+                vision);
         flywheel = new Flywheel(new FlywheelIO() {});
         ampPivot = new AmpPivot(new AmpPivotIO() {});
         feeder = new Feeder(new FeederIO() {}, new BreakbeamIO() {});

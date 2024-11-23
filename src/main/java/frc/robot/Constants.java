@@ -22,7 +22,7 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static Mode currentMode = Mode.REPLAY;
+  public static Mode currentMode = Mode.REAL;
 
   public static enum Mode {
     /** Running on a real robot. */
@@ -34,4 +34,8 @@ public final class Constants {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  // Field constants
+  public static final double kFieldLengthMeters = 16.54; // x
+  public static final double kFieldWidthMeters = 8.21; // y
 }
