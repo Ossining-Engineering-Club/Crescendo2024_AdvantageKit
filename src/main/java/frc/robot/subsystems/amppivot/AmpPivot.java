@@ -4,8 +4,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AmpPivot extends SubsystemBase {
-  private final double kPIDTolerance = 3.0;
-
   private final AmpPivotIO io;
   private final AmpPivotIOInputsAutoLogged inputs = new AmpPivotIOInputsAutoLogged();
 
@@ -15,7 +13,7 @@ public class AmpPivot extends SubsystemBase {
     this.io = io;
 
     pid = new PIDController(0.0055, 0, 0);
-    pid.setTolerance(kPIDTolerance);
+    pid.setTolerance(AmpPivotConstants.kPIDTolerance);
   }
 
   @Override

@@ -4,11 +4,12 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.vision.VisionConstants.CameraConfig;
+import frc.robot.subsystems.vision.VisionConstants.PoseEstimate;
 import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.Logger;
@@ -17,10 +18,6 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Vision extends SubsystemBase {
-  public static record CameraConfig(String name, Transform3d robotToCam) {}
-
-  public static record PoseEstimate(EstimatedRobotPose estimatedPose, Matrix<N3, N1> standardDev) {}
-
   private final VisionIO[] ios;
   private final VisionIOInputsAutoLogged[] inputs;
   private final CameraConfig[] configs;
@@ -84,12 +81,12 @@ public class Vision extends SubsystemBase {
 
         addedPose = true;
         Logger.recordOutput(
-            "/" + configs[i].name + "/Raw Vision",
+            "/" + configs[i].name() + "/Raw Vision",
             new Pose2d[] {inputs[i].estimatedPose.toPose2d()});
         Logger.recordOutput(
-            "/" + configs[i].name + "/Vision Timestamp", inputs[i].timestampSeconds);
+            "/" + configs[i].name() + "/Vision Timestamp", inputs[i].timestampSeconds);
         Logger.recordOutput(
-            "/" + configs[i].name + "/Vision Std Dev",
+            "/" + configs[i].name() + "/Vision Std Dev",
             new double[] {stddevs.get(0, 0), stddevs.get(1, 0), stddevs.get(2, 0)});
 
         estimates.add(
@@ -102,7 +99,7 @@ public class Vision extends SubsystemBase {
                 stddevs));
       }
       if (!addedPose) {
-        Logger.recordOutput("/" + configs[i].name + "/Raw Vision", new Pose2d[] {});
+        Logger.recordOutput("/" + configs[i].name() + "/Raw Vision", new Pose2d[] {});
       }
     }
     // logging detected tags

@@ -10,9 +10,13 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
-import frc.robot.subsystems.vision.Vision.CameraConfig;
+import org.photonvision.EstimatedRobotPose;
 
 public class VisionConstants {
+  public static record CameraConfig(String name, Transform3d robotToCam) {}
+
+  public static record PoseEstimate(EstimatedRobotPose estimatedPose, Matrix<N3, N1> standardDev) {}
+
   public static final AprilTagFieldLayout TAG_LAYOUT =
       AprilTagFieldLayout.loadField(AprilTagFields.k2024Crescendo);
 

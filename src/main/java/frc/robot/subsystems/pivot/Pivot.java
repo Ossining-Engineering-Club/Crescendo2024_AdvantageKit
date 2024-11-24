@@ -6,9 +6,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Pivot extends SubsystemBase {
-  private final double kPIDTolerance = 0.5;
-  private final double kAmpAngleCheckingTolerance = 3.0;
-
   private final PivotIO io;
   private final PivotIOInputsAutoLogged inputs = new PivotIOInputsAutoLogged();
 
@@ -21,7 +18,7 @@ public class Pivot extends SubsystemBase {
     pid = new PIDController(.85, 0, 0);
     ffModel = new ArmFeedforward(0, -0.026, 0);
 
-    pid.setTolerance(kPIDTolerance);
+    pid.setTolerance(PivotConstants.kPIDTolerance);
   }
 
   @Override
@@ -38,7 +35,8 @@ public class Pivot extends SubsystemBase {
   }
 
   public boolean atAmpAngle() {
-    return Math.abs(getAngle() - PivotConstants.kAmpAngle) <= kAmpAngleCheckingTolerance;
+    return Math.abs(getAngle() - PivotConstants.kAmpAngle)
+        <= PivotConstants.kAmpAngleCheckingTolerance;
   }
 
   public void runSetpoint(double setpoint) {
