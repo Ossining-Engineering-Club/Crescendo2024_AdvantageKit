@@ -47,12 +47,18 @@ public class Vision extends SubsystemBase {
     }
   }
 
+  @Override
+  public void periodic() {
+    for (int i = 0; i < ios.length; i++) {
+      ios[i].updateInputs(inputs[i]);
+      Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
+    }
+  }
+
   public PoseEstimate[] getEstimatedGlobalPoses() {
     List<PoseEstimate> estimates = new ArrayList<>();
     List<Pose3d> detectedTagPoses = new ArrayList<>();
     for (int i = 0; i < ios.length; i++) {
-      ios[i].updateInputs(inputs[i]);
-
       // adding detected tags to list to be logged
       for (PhotonTrackedTarget tag : inputs[i].result.getTargets()) {
         VisionConstants.TAG_LAYOUT

@@ -3,6 +3,7 @@ package frc.robot.subsystems.feeder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.breakbeam.Breakbeam;
 import frc.robot.subsystems.breakbeam.BreakbeamIO;
+import org.littletonrobotics.junction.Logger;
 
 public class Feeder extends SubsystemBase {
   private final FeederIO io;
@@ -11,12 +12,13 @@ public class Feeder extends SubsystemBase {
 
   public Feeder(FeederIO io, BreakbeamIO bbio) {
     this.io = io;
-    breakbeam = new Breakbeam(bbio);
+    breakbeam = new Breakbeam(bbio, "Shooter");
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    Logger.processInputs("Feeder", inputs);
   }
 
   public void forward() {

@@ -3,6 +3,7 @@ package frc.robot.subsystems.intake;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.breakbeam.Breakbeam;
 import frc.robot.subsystems.breakbeam.BreakbeamIO;
+import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
   private final IntakeIO io;
@@ -11,12 +12,13 @@ public class Intake extends SubsystemBase {
 
   public Intake(IntakeIO io, BreakbeamIO bbio) {
     this.io = io;
-    breakbeam = new Breakbeam(bbio);
+    breakbeam = new Breakbeam(bbio, "Intake");
   }
 
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    Logger.processInputs("Intake", inputs);
   }
 
   public void forward() {

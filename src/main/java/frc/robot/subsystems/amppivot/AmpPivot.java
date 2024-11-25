@@ -2,6 +2,7 @@ package frc.robot.subsystems.amppivot;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 
 public class AmpPivot extends SubsystemBase {
   private final AmpPivotIO io;
@@ -19,6 +20,7 @@ public class AmpPivot extends SubsystemBase {
   @Override
   public void periodic() {
     io.updateInputs(inputs);
+    Logger.processInputs("AmpPivot", inputs);
   }
 
   public double getAngle() {
