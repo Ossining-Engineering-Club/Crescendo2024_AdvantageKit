@@ -38,9 +38,12 @@ public class Flywheel extends SubsystemBase {
     // separate robot with different tuning)
     switch (Constants.currentMode) {
       case REAL:
+        ffModel = new SimpleMotorFeedforward(0.1, 0.05);
+        io.configurePID(0.024, 0.0, 0.0);
+        break;
       case REPLAY:
         ffModel = new SimpleMotorFeedforward(0.1, 0.05);
-        io.configurePID(1.0, 0.0, 0.0);
+        io.configurePID(0.024, 0.0, 0.0);
         break;
       case SIM:
         ffModel = new SimpleMotorFeedforward(0.0, 0.03);
@@ -101,6 +104,11 @@ public class Flywheel extends SubsystemBase {
   @AutoLogOutput
   public double getVelocityRPM() {
     return Units.radiansPerSecondToRotationsPerMinute(inputs.velocityRadPerSec);
+  }
+
+  public boolean isSpunUp() {
+    return Math.abs(getVelocityRPM() - FlywheelConstants.kDefaultRPM)
+        <= FlywheelConstants.kRPMTolerance;
   }
 
   /** Returns the current velocity in radians per second. */

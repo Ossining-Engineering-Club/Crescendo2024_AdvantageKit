@@ -41,7 +41,7 @@ import frc.robot.subsystems.breakbeam.BreakbeamIOReal;
 import frc.robot.subsystems.breakbeam.BreakbeamIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIOPigeonIMU;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOTalonFXAndSparkMax;
@@ -101,7 +101,7 @@ public class RobotContainer {
         vision = new Vision(VisionConstants.FRONT_CAMERA);
         drive =
             new Drive(
-                new GyroIOPigeon2(),
+                new GyroIOPigeonIMU(),
                 new ModuleIOTalonFXAndSparkMax(0),
                 new ModuleIOTalonFXAndSparkMax(1),
                 new ModuleIOTalonFXAndSparkMax(2),
