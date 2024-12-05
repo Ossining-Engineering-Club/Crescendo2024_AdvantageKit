@@ -11,11 +11,10 @@ import frc.robot.Constants;
 import frc.robot.subsystems.vision.VisionConstants.CameraConfig;
 import frc.robot.subsystems.vision.VisionConstants.PoseEstimate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.littletonrobotics.junction.Logger;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.targeting.PhotonPipelineResult;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Vision extends SubsystemBase {
   private final VisionIO[] ios;
@@ -57,12 +56,12 @@ public class Vision extends SubsystemBase {
 
   public PoseEstimate[] getEstimatedGlobalPoses() {
     List<PoseEstimate> estimates = new ArrayList<>();
-    List<Pose3d> detectedTagPoses = new ArrayList<>();
+    Set<Pose3d> detectedTagPoses = new HashSet<Pose3d>();
     for (int i = 0; i < ios.length; i++) {
       // adding detected tags to list to be logged
-      for (PhotonTrackedTarget tag : inputs[i].result.getTargets()) {
+      for (int tagId : inputs[i].tagIds) {
         VisionConstants.TAG_LAYOUT
-            .getTagPose(tag.getFiducialId())
+            .getTagPose(tagId)
             .ifPresent(
                 (tagPose) ->
                     detectedTagPoses.add(tagPose)); // if there's a pose, add it to the list
@@ -83,7 +82,7 @@ public class Vision extends SubsystemBase {
           continue;
 
         Matrix<N3, N1> stddevs =
-            getEstimationStdDevs(inputs[i].estimatedPose.toPose2d(), inputs[i].result);
+            getEstimationStdDevs(inputs[i].estimatedPose.toPose2d(), inputs[i].tagIds);
 
         addedPose = true;
         Logger.recordOutput(
@@ -97,12 +96,7 @@ public class Vision extends SubsystemBase {
 
         estimates.add(
             new PoseEstimate(
-                new EstimatedRobotPose(
-                    inputs[i].estimatedPose,
-                    inputs[i].timestampSeconds,
-                    inputs[i].result.targets,
-                    inputs[i].strategy),
-                stddevs));
+                inputs[i].estimatedPose.toPose2d(), inputs[i].timestampSeconds, stddevs));
       }
       if (!addedPose) {
         Logger.recordOutput("/" + configs[i].name() + "/Raw Vision", new Pose2d[] {});
@@ -114,15 +108,13 @@ public class Vision extends SubsystemBase {
     return estimates.toArray(PoseEstimate[]::new);
   }
 
-  public Matrix<N3, N1> getEstimationStdDevs(
-      Pose2d estimatedPose, PhotonPipelineResult pipelineResult) {
+  public Matrix<N3, N1> getEstimationStdDevs(Pose2d estimatedPose, int[] tagIds) {
     var estStdDevs = VisionConstants.SINGLE_TAG_STD_DEVS;
-    var targets = pipelineResult.getTargets();
     int numTags = 0;
     double avgDist = 0;
-    for (var tgt : targets) {
+    for (int tagId : tagIds) {
       // if nonexistent tag, ignore
-      var tagPose = VisionConstants.TAG_LAYOUT.getTagPose(tgt.getFiducialId());
+      var tagPose = VisionConstants.TAG_LAYOUT.getTagPose(tagId);
       if (tagPose.isEmpty()) continue;
 
       numTags++;

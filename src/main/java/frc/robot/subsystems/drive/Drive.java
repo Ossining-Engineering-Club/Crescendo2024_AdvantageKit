@@ -284,9 +284,7 @@ public class Drive extends SubsystemBase {
   public void updateEstimates(PoseEstimate... poses) {
     for (int i = 0; i < poses.length; i++) {
       poseEstimator.addVisionMeasurement(
-          poses[i].estimatedPose().estimatedPose.toPose2d(),
-          poses[i].estimatedPose().timestampSeconds,
-          poses[i].standardDev());
+          poses[i].estimatedPose(), poses[i].timestampSeconds(), poses[i].standardDev());
     }
   }
 }

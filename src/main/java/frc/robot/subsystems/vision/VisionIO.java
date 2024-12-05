@@ -3,12 +3,11 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose3d;
 import org.littletonrobotics.junction.AutoLog;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.PhotonPipelineResult;
 
 public interface VisionIO {
   @AutoLog
   public static class VisionIOInputs {
-    public PhotonPipelineResult result = new PhotonPipelineResult();
+    public int[] tagIds = new int[0];
     public Pose3d estimatedPose;
     public double timestampSeconds;
     public PoseStrategy strategy;

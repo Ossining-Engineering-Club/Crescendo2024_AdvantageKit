@@ -1,9 +1,12 @@
 package frc.robot.subsystems.vision;
 
 import frc.robot.subsystems.vision.VisionConstants.CameraConfig;
+import java.util.List;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionIOReal implements VisionIO {
   public final PhotonCamera camera;
@@ -22,15 +25,23 @@ public class VisionIOReal implements VisionIO {
 
   @Override
   public void updateInputs(VisionIOInputs inputs) {
-    inputs.result = camera.getLatestResult();
-    var optionalEstimate = estimator.update(inputs.result);
+    PhotonPipelineResult result = camera.getLatestResult();
+    var optionalEstimate = estimator.update(result);
     if (optionalEstimate.isPresent()) {
+      List<PhotonTrackedTarget> tags = result.getTargets();
+      int[] tagIds = new int[tags.size()];
+      for (int i = 0; i < tags.size(); i++) {
+        tagIds[i] = tags.get(i).getFiducialId();
+      }
+      inputs.tagIds = tagIds;
+
       inputs.estimatedPose = optionalEstimate.get().estimatedPose;
       inputs.timestampSeconds = optionalEstimate.get().timestampSeconds;
       inputs.strategy = optionalEstimate.get().strategy;
       inputs.estimateIsPresent = true;
     } else {
       inputs.estimateIsPresent = false;
+      inputs.tagIds = new int[0];
     }
   }
 }
